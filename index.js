@@ -56,6 +56,40 @@ app.post('/api/register', (req, res) => {
 
 // Get common students 
 app.get('/api/commonstudents/', (req, res) => {
+    var statement = 'SELECT student FROM relationship WHERE teacher=?'
+    var len = req.query.teacher.length
+    if (Array.isArray(req.query.teacher)) {
+        var string = ' INTERCEPT SELECT student FROM relationship WHERE teacher=?'
+        string = string.repeat(len - 1)
+        statement = statement + string 
+        params = req.query.teacher
+    } else {
+        params = [req.query.teacher]
+    }
+    console.log(statement)
+
+    mysqlConnection.query(statement, params, (err, rows, fields) => {
+        if (!err) {
+            console.log(rows)
+            var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
+            var array = []
+            for (var key in resultArray) {
+                array.push(resultArray[key].student)
+            }
+            var ret = { student: array }
+            res.send(ret)
+
+        } else {
+            console.log(err)
+        }
+    })
+
+})
+
+
+
+// Get common students 
+app.get('/api/common/', (req, res) => {
     var statement = 'SELECT student FROM relationship WHERE teacher = ?'
     let students = []
     var len = req.query.teacher.length
@@ -70,19 +104,18 @@ app.get('/api/commonstudents/', (req, res) => {
                 if (students.length == 0) {
                     students = array
                 } else {
+                    console.log(array)
+                    console.log("students " + students)
                     students = intersect(students, array)
                 }
 
             } else {
                 console.log(err)
             }
-            if (i == (len - 1)) {
-                var ret = { student: students }
-                res.send(ret)
-
-            }
         })
     }
+    var ret = { student: students }
+    res.send(ret)
 })
 
 

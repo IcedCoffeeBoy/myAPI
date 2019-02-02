@@ -10,3 +10,9 @@ CREATE TABLE IF NOT EXISTS `relationship` (
 INSERT INTO `relationship` VALUES 
 ("teacherken@gmail.com","studentjon@example.com"),
 ("teacherken@gmail.com","studenthon@example.com");
+
+SELECT * FROM common
+INNER JOIN
+(SELECT student FROM relationship WHERE teacher='teacherken@gmail.com')
+INNER JOIN
+(SELECT student FROM relationship WHERE teacher='teacherboy@gmail.com'));
