@@ -1,4 +1,6 @@
 # myAPI
+open node.js command prompt <br>
+run `node index.js`
 
 # mysql command line 
 <b>STEPS</b>: 
