@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/IcedCoffeeBoy/myAPI#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
     "mysql": "^2.16.0"
   }
 }
