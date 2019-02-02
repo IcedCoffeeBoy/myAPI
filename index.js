@@ -15,7 +15,7 @@ var mysqlConnection = mysql.createConnection({
 
 mysqlConnection.connect((err) => {
     if (!err) {
-        console.log('DB connection succeded')
+        console.log('DB connection successful')
     } else {
         console.log('DB connection failed \n Error:' + JSON.stringify(err, undefined, 2))
     }
@@ -44,7 +44,7 @@ app.post('/api/register', (req, res) => {
     var student_array = json.students
     var values = []
     for (var i in student_array) {
-        values[i] = [teacher_email,student_array[i]]
+        values[i] = [teacher_email, student_array[i]]
     }
     var statement = "INSERT INTO `relationship` VALUES ?"
     mysqlConnection.query(statement, [values], (err, rows, fields) => {
@@ -54,4 +54,42 @@ app.post('/api/register', (req, res) => {
     })
 })
 
+// Get common students 
+app.get('/api/commonstudents/', (req, res) => {
+    var statement = 'SELECT student FROM relationship WHERE teacher = ?'
+    let students = []
+    var len = req.query.teacher.length
+    for (let i = 0; i < len + 1; i++) {
+        mysqlConnection.query(statement, [req.query.teacher[i]], (err, rows, fields) => {
+            if (!err) {
+                var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
+                var array = []
+                for (var key in resultArray) {
+                    array.push(resultArray[key].student)
+                }
+                if (students.length == 0) {
+                    students = array
+                } else {
+                    students = intersect(students, array)
+                }
 
+            } else {
+                console.log(err)
+            }
+            if (i == (len - 1)) {
+                var ret = { student: students }
+                res.send(ret)
+
+            }
+        })
+    }
+})
+
+
+function intersect(a, b) {
+    var t;
+    if (b.length > a.length) t = b, b = a, a = t; // indexOf to loop over shorter
+    return a.filter(function (e) {
+        return b.indexOf(e) > -1;
+    });
+}

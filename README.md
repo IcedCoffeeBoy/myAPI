@@ -1,5 +1,6 @@
 # myAPI
 open node.js command prompt <br>
+run `npm install`
 run `node index.js`
 
 # mysql setup
