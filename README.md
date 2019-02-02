@@ -13,4 +13,4 @@ For testing we will be using postman to make the api call
 
 ## User stories 1 
 As a teacher, I want to register one or more students to a specified teacher.
-![register img](/image/register_postman.png)
+![register img](/image/register_postman.png?raw=true)
