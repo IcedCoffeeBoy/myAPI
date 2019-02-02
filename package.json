@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/IcedCoffeeBoy/myAPI/issues"
   },
-  "homepage": "https://github.com/IcedCoffeeBoy/myAPI#readme"
+  "homepage": "https://github.com/IcedCoffeeBoy/myAPI#readme",
+  "dependencies": {
+    "mysql": "^2.16.0"
+  }
 }
