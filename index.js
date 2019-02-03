@@ -47,7 +47,7 @@ app.post('/api/register', (req, res) => {
     for (var i in student_array) {
         values[i] = [teacher_email, student_array[i]]
     }
-    var statement = "INSERT INTO `relationship` VALUES ?"
+    var statement = "INSERT INTO `relationship`(teacher,student) VALUES ?"
     mysqlConnection.query(statement, [values], (err, rows, fields) => {
         if (err) {
             console.log(err)
@@ -104,7 +104,7 @@ app.post('/api/suspend', (req, res) => {
     let json = req.body
     var student_email = json.student
     
-    var statement = "DELETE FROM `relationship` WHERE student=?"
+    var statement = "UPDATE `relationship` SET suspended=1 WHERE student=?"
     mysqlConnection.query(statement, [student_email], (err, rows, fields) => {
         if (err) {
             console.log(err)
