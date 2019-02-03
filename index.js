@@ -31,7 +31,7 @@ app.get('/relationship', (req, res) => {
             res.send(rows)
         } else {
             console.log(err)
-            res.status(404).send({message : "MYSQL ERROR"})
+            res.status(404).send({ message: "MYSQL ERROR" })
         }
     })
 })
@@ -51,7 +51,7 @@ app.post('/api/register', (req, res) => {
     mysqlConnection.query(statement, [values], (err, rows, fields) => {
         if (err) {
             console.log(err)
-            res.status(404).send({message: "MYSQL ERROR"})
+            res.status(404).send({ message: "MYSQL ERROR" })
         } else {
             res.sendStatus(204)
         }
@@ -84,37 +84,74 @@ app.get('/api/commonstudents/', (req, res) => {
     mysqlConnection.query(statement, params, (err, rows, fields) => {
         if (!err) {
             console.log(rows)
-            var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
-            var array = []
-            for (var key in resultArray) {
-                array.push(resultArray[key].student)
-            }
+            var array = toArray(rows)
             var ret = { student: array }
             res.send(ret)
         } else {
             console.log(err)
-            res.status(404).send({"message": "MYSQL ERROR"})
+            res.status(404).send({ "message": "MYSQL ERROR" })
         }
     })
 })
 
 // Suspend a student 
-// When the student is suspend all records regarding the student will be removed
 app.post('/api/suspend', (req, res) => {
     let json = req.body
     var student_email = json.student
-    
+
     var statement = "UPDATE `relationship` SET suspended=1 WHERE student=?"
     mysqlConnection.query(statement, [student_email], (err, rows, fields) => {
         if (err) {
             console.log(err)
-            res.status(404).send({message: "MYSQL ERROR"})
+            res.status(404).send({ message: "MYSQL ERROR" })
         } else {
             console.log(student_email, "removed")
             res.sendStatus(204)
         }
     })
 })
+
+// Notification 
+app.post('/api/retrievefornotifications/', (req, res) => {
+    let json = req.body
+    var teacher = json.teacher
+    var message = json.notification
+    var emails = trimMessage(message)
+    var statement = "SELECT student from `relationship` WHERE teacher=? AND suspended is null"
+
+    mysqlConnection.query(statement, [teacher], (err, rows, fields) => {
+        if (err) {
+            console.log(err)
+            res.status(404).send({ message: "MYSQL ERROR" })
+        } else {
+            students = toArray(rows)
+            console.log(students)
+            students.forEach((student) => {
+                if (!emails.includes(student)) {
+                    emails.push(student)
+                }
+            })
+            res.send({ recipients: emails })
+        }
+    })
+})
+
+//Auxillary functions
+function trimMessage(msg) {
+    var lines = msg.split(" @")
+    return lines.slice(1)
+}
+
+function toArray(rows) {
+    var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
+    var array = []
+    for (var key in resultArray) {
+        array.push(resultArray[key].student)
+    }
+    return array
+}
+
+
 
 
 
