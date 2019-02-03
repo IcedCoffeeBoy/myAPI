@@ -87,7 +87,7 @@ app.get('/api/commonstudents/', (req, res) => {
 })
 
 
-
+// Old
 // Get common students 
 app.get('/api/common/', (req, res) => {
     var statement = 'SELECT student FROM relationship WHERE teacher = ?'
