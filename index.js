@@ -93,7 +93,7 @@ app.get('/api/common/', (req, res) => {
     var statement = 'SELECT student FROM relationship WHERE teacher = ?'
     let students = []
     var len = req.query.teacher.length
-    for (let i = 0; i < len + 1; i++) {
+    for (let i = 0; i < len; i++) {
         mysqlConnection.query(statement, [req.query.teacher[i]], (err, rows, fields) => {
             if (!err) {
                 var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
