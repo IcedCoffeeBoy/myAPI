@@ -31,6 +31,7 @@ app.get('/relationship', (req, res) => {
             res.send(rows)
         } else {
             console.log(err)
+            res.status(404).send({message : "MYSQL ERROR"})
         }
     })
 })
@@ -50,6 +51,7 @@ app.post('/api/register', (req, res) => {
     mysqlConnection.query(statement, [values], (err, rows, fields) => {
         if (err) {
             console.log(err)
+            res.status(404).send({message: "MYSQL ERROR"})
         } else {
             res.sendStatus(204)
         }
@@ -89,9 +91,9 @@ app.get('/api/commonstudents/', (req, res) => {
             }
             var ret = { student: array }
             res.send(ret)
-
         } else {
             console.log(err)
+            res.status(404).send({"message": "MYSQL ERROR"})
         }
     })
 })
@@ -106,6 +108,7 @@ app.post('/api/suspend', (req, res) => {
     mysqlConnection.query(statement, [student_email], (err, rows, fields) => {
         if (err) {
             console.log(err)
+            res.status(404).send({message: "MYSQL ERROR"})
         } else {
             console.log(student_email, "removed")
             res.sendStatus(204)
