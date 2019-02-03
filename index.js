@@ -21,7 +21,7 @@ mysqlConnection.connect((err) => {
     }
 });
 
-app.listen(3000, () => console.log('Express serevr is running at port no: 3000'))
+app.listen(3000, () => console.log('Express server is running at port no: 3000'))
 
 
 // Get all relationship
@@ -50,6 +50,8 @@ app.post('/api/register', (req, res) => {
     mysqlConnection.query(statement, [values], (err, rows, fields) => {
         if (err) {
             console.log(err)
+        } else {
+            res.sendStatus(204)
         }
     })
 })
@@ -65,9 +67,9 @@ app.get('/api/commonstudents/', (req, res) => {
             statement = statement + " INNER JOIN (SELECT student FROM relationship  WHERE teacher=?) as t" + count.toString() + ""
         }
         statement = statement + " on t1.student=t2.student"
-        for (var j = 0; i < len - 2; j++){
-            var num = j+3
-            statement = statement + "AND t1.student=t"+ num.toString() +".student"
+        for (var j = 0; i < len - 2; j++) {
+            var num = j + 3
+            statement = statement + "AND t1.student=t" + num.toString() + ".student"
         }
         statement = statement + ')'
         params = req.query.teacher
@@ -92,6 +94,24 @@ app.get('/api/commonstudents/', (req, res) => {
             console.log(err)
         }
     })
-
 })
+
+// Suspend a student 
+// When the student is suspend all records regarding the student will be removed
+app.post('/api/suspend', (req, res) => {
+    let json = req.body
+    var student_email = json.student
+    
+    var statement = "DELETE FROM `relationship` WHERE student=?"
+    mysqlConnection.query(statement, [student_email], (err, rows, fields) => {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log(student_email, "removed")
+            res.sendStatus(204)
+        }
+    })
+})
+
+
 
