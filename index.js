@@ -56,14 +56,23 @@ app.post('/api/register', (req, res) => {
 
 // Get common students 
 app.get('/api/commonstudents/', (req, res) => {
-    var statement = 'SELECT student FROM relationship WHERE teacher=?'
-    var len = req.query.teacher.length
     if (Array.isArray(req.query.teacher)) {
-        var string = ' INTERCEPT SELECT student FROM relationship WHERE teacher=?'
-        string = string.repeat(len - 1)
-        statement = statement + string 
+        var len = req.query.teacher.length
+        var statement = "SELECT t1.student from ("
+        statement = statement + "(SELECT student FROM relationship WHERE teacher=?) as t1"
+        for (var i = 0; i < len - 1; i++) {
+            var count = i + 2
+            statement = statement + " INNER JOIN (SELECT student FROM relationship  WHERE teacher=?) as t" + count.toString() + ""
+        }
+        statement = statement + " on t1.student=t2.student"
+        for (var j = 0; i < len - 2; j++){
+            var num = j+3
+            statement = statement + "AND t1.student=t"+ num.toString() +".student"
+        }
+        statement = statement + ')'
         params = req.query.teacher
     } else {
+        var statement = 'SELECT student FROM relationship WHERE teacher=?'
         params = [req.query.teacher]
     }
     console.log(statement)
