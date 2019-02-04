@@ -1,3 +1,4 @@
+const mysql_config = require('./mysql_config.js')
 const mysql = require('mysql');
 const express = require('express');
 const bodypaser = require('body-parser');
@@ -5,13 +6,7 @@ var app = express();
 
 app.use(bodypaser.json());
 
-
-var mysqlConnection = mysql.createConnection({
-    host: 'localhost',
-    user: 'foo',
-    password: 'bar',
-    database: 'school'
-});
+var mysqlConnection = mysql.createConnection(mysql_config);
 
 mysqlConnection.connect((err) => {
     if (!err) {
@@ -20,7 +15,6 @@ mysqlConnection.connect((err) => {
         console.log('DB connection failed \n Error:' + JSON.stringify(err, undefined, 2))
     }
 });
-
 
 app.listen(3000, () => console.log('Express server is running at port no: 3000'))
 

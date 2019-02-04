@@ -1,9 +1,12 @@
 # myAPI
+## Enter your mysql configuration 
+
+## Running the API
 open node.js command prompt <br>
 run `npm install`
 run `node index.js`
 
-# mysql setup
+## mysql setup
 <b>STEPS</b>: 
 1. CREATE USER 'foo'@'%' IDENTIFIED WITH mysql_native_password BY 'bar' <br>
 2. GRANT ALL PRIVILEGES ON *.* TO 'foo'@'%'
