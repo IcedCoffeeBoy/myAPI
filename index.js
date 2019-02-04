@@ -21,6 +21,7 @@ mysqlConnection.connect((err) => {
     }
 });
 
+
 app.listen(3000, () => console.log('Express server is running at port no: 3000'))
 
 
