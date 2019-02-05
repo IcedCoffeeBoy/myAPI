@@ -33,16 +33,31 @@ app.get('/relationship', (req, res) => {
 })
 
 
-// Register one or more student to a teacher
+// Register a teacher to many student and a student to many teacher
 app.post('/api/register', (req, res) => {
-    //let json = req.body;
     let json = req.body
-    var teacher_email = json.teacher;
-    var student_array = json.students
-    var values = []
-    for (var i in student_array) {
-        values[i] = [teacher_email, student_array[i]]
+    var teacher_emails = json.teacher
+    var student_emails = json.students
+
+    if (!Array.isArray(teacher_emails)) {
+        teacher_emails = [teacher_emails]
     }
+
+    if (!Array.isArray(student_emails)) {
+        student_emails = [student_emails]
+    }
+
+    var values = []
+    k = 0
+
+    for (var i in teacher_emails) {
+        for (var j in student_emails) {
+            values[k++] = [teacher_emails[i], student_emails[j]]
+        }
+    }
+
+    console.log(values)
+
     var statement = "INSERT INTO `relationship`(teacher,student) VALUES ?"
     mysqlConnection.query(statement, [values], (err, rows, fields) => {
         if (err) {
@@ -53,6 +68,7 @@ app.post('/api/register', (req, res) => {
         }
     })
 })
+
 
 // Get common students 
 app.get('/api/commonstudents/', (req, res) => {
