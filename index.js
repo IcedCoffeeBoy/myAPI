@@ -1,4 +1,5 @@
 const mysql_config = require('./mysql_config.js')
+const createSQLtable = require('./createSQLtable.js')
 const mysql = require('mysql');
 const express = require('express');
 const bodypaser = require('body-parser');
@@ -12,6 +13,7 @@ mysqlConnection.connect((err) => {
     if (!err) {
         console.log('DB connection successful')
         //Todo: Added default table creation 
+        createSQLtable(mysqlConnection)
     } else {
         console.log('DB connection failed \n Error:' + JSON.stringify(err, undefined, 2))
         console.log('Please ensure you have enter in the correct credentials in mysql_config.js')
@@ -65,8 +67,8 @@ app.post('/api/register', (req, res) => {
 
     console.log(values)
 
-    var statement = "INSERT IGNORE INTO `relationship`(teacher,student) VALUES ?"
-    mysqlConnection.query(statement, [values], (err, rows, fields) => {
+    var insertRelationship = "INSERT IGNORE INTO `relationship`(teacher,student) VALUES ?"
+    mysqlConnection.query(insertRelationship, [values], (err, rows, fields) => {
         if (err) {
             console.log(err)
             res.status(404).send({ message: "MYSQL ERROR" })
@@ -74,6 +76,19 @@ app.post('/api/register', (req, res) => {
             res.sendStatus(204)
         }
     })
+
+    var insertStudents = "INSERT IGNORE INTO `status`(student) VALUES ? "
+    students_array = []
+    for (var k in student_emails){
+        students_array[k] = [student_emails[k]]
+    }
+
+    mysqlConnection.query(insertStudents,[students_array], (err, rows, fields) => {
+        if (err) {
+            console.log(err)
+        } 
+    })
+
 })
 
 
@@ -118,7 +133,7 @@ app.post('/api/suspend', (req, res) => {
     let json = req.body
     var student_email = json.student
 
-    var statement = "UPDATE `relationship` SET suspended=1 WHERE student=?"
+    var statement = "UPDATE `status` SET suspended=1 WHERE student=?"
     mysqlConnection.query(statement, [student_email], (err, rows, fields) => {
         if (err) {
             console.log(err)
@@ -136,7 +151,11 @@ app.post('/api/retrievefornotifications/', (req, res) => {
     var teacher = json.teacher
     var message = json.notification
     var emails = trimMessage(message)
-    var statement = "SELECT student from `relationship` WHERE teacher=? AND suspended is null"
+    var statement = "SELECT t1.student from (" +
+        "(SELECT student FROM relationship WHERE teacher=?) as t1 " +
+        "INNER JOIN" + 
+        "(SELECT student FROM status WHERE suspended is null) as t2 " +
+         "on t1.student = t2.student)" 
 
     mysqlConnection.query(statement, [teacher], (err, rows, fields) => {
         if (err) {
