@@ -11,6 +11,7 @@ var mysqlConnection = mysql.createConnection(mysql_config);
 mysqlConnection.connect((err) => {
     if (!err) {
         console.log('DB connection successful')
+        //Todo: Added default table creation 
     } else {
         console.log('DB connection failed \n Error:' + JSON.stringify(err, undefined, 2))
         console.log('Please ensure you have enter in the correct credentials in mysql_config.js')
@@ -64,7 +65,7 @@ app.post('/api/register', (req, res) => {
 
     console.log(values)
 
-    var statement = "INSERT INTO `relationship`(teacher,student) VALUES ?"
+    var statement = "INSERT IGNORE INTO `relationship`(teacher,student) VALUES ?"
     mysqlConnection.query(statement, [values], (err, rows, fields) => {
         if (err) {
             console.log(err)
@@ -87,9 +88,9 @@ app.get('/api/commonstudents/', (req, res) => {
             statement = statement + " INNER JOIN (SELECT student FROM relationship  WHERE teacher=?) as t" + count.toString() + ""
         }
         statement = statement + " on t1.student=t2.student"
-        for (var j = 0; i < len - 2; j++) {
+        for (var j = 0; j < len - 2; j++) {
             var num = j + 3
-            statement = statement + "AND t1.student=t" + num.toString() + ".student"
+            statement = statement + " AND t1.student=t" + num.toString() + ".student"
         }
         statement = statement + ')'
         params = req.query.teacher
