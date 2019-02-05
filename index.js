@@ -47,6 +47,12 @@ app.post('/api/register', (req, res) => {
         student_emails = [student_emails]
     }
 
+    if (student_emails.length > 1 && teacher_emails.length > 1) {
+        console.log("User attempt to add multiple teachers to multiple students!")
+        res.status(404).send({ message: "Unable to add multiple teachers to multiple students" })
+        return
+    }
+
     var values = []
     k = 0
 
