@@ -11,6 +11,6 @@ run `npm install` <br>
 run `npm start` <br>
 
 ## Testing using postman-newman
-For testing we will be using newman to make api call 
+For testing we will be using newman to perform test on postman collection <br>
 run `npm test`
 
