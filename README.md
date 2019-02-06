@@ -1,10 +1,11 @@
 # myAPI
+
 ## Enter your mysql configuration 
 
 ## Running the API
 open node.js command prompt <br>
 run `npm install`
-run `node index.js`
+run `npm start`
 
 ## mysql setup
 <b>STEPS</b>: 
@@ -12,9 +13,7 @@ run `node index.js`
 2. GRANT ALL PRIVILEGES ON *.* TO 'foo'@'%'
 3. Create the database using the query.sql script
 
-# Testing using postman
-For testing we will be using postman to make the api call
+# Testing using postman-newman
+For testing we will be using newman to make api call 
+run `npm test`
 
-## User stories 1 
-As a teacher, I want to register one or more students to a specified teacher.
-![register img](/image/register_postman.png?raw=true)
