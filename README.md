@@ -1,19 +1,16 @@
 # myAPI
 
-## Enter your mysql configuration 
+## Enter your MYSQL configuration
+Go to `mysql_config.js` <br>
+Enter `username`,`password`,`database` <br>
+Tables will be created by default when the app start running
+   
 
 ## Running the API
-open node.js command prompt <br>
-run `npm install`
-run `npm start`
+run `npm install` <br>
+run `npm start` <br>
 
-## mysql setup
-<b>STEPS</b>: 
-1. CREATE USER 'foo'@'%' IDENTIFIED WITH mysql_native_password BY 'bar' <br>
-2. GRANT ALL PRIVILEGES ON *.* TO 'foo'@'%'
-3. Create the database using the query.sql script
-
-# Testing using postman-newman
+## Testing using postman-newman
 For testing we will be using newman to make api call 
 run `npm test`
 
