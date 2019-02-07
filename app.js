@@ -1,5 +1,5 @@
-const mysql_config = require('./mysql_config.js')
-const createSQLtable = require('./createSQLtable.js')
+const mysql_config = require('./mysql_config.js');
+const createSQLtable = require('./createSQLtable.js');
 const mysql = require('mysql');
 const express = require('express');
 const bodypaser = require('body-parser');
