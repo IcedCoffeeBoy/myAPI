@@ -1,4 +1,5 @@
 # myAPI
+Created using node.js and MYSQL
 
 ## Enter your MYSQL configuration
 Go to `mysql_config.js` <br>

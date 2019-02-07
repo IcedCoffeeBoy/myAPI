@@ -27,9 +27,16 @@ mysqlConnection.connect((err) => {
 
 app.listen(3000, () => console.log('Express server is running at port no: 3000'))
 
+/* 
+Get all relationship between teacher and student 
+Headers: authorization: 1234
+*/
+app.get('/api/relationship', (req, res) => {
+    var apiKey = 1234
+    if (req.headers.authorization != apiKey) {
+        return res.status(401).json({ status: 'error' });
+    }
 
-// Get all relationship
-app.get('/relationship', (req, res) => {
     mysqlConnection.query('SELECT * FROM relationship', (err, rows, fields) => {
         if (!err) {
             res.send(rows)
@@ -149,6 +156,36 @@ app.post('/api/suspend', (req, res) => {
     })
 })
 
+// Unsuspend a student 
+app.post('/api/unsuspend', (req, res) => {
+    let json = req.body
+    var student_email = json.student
+
+    var statement = "UPDATE `status` SET suspended=null WHERE student=?"
+    mysqlConnection.query(statement, [student_email], (err, rows, fields) => {
+        if (err) {
+            console.log(err)
+            res.status(404).send({ message: "MYSQL ERROR" })
+        } else {
+            res.sendStatus(204)
+        }
+    })
+})
+
+
+// Get list of suspended students
+app.get('/api/suspendedlist/', (req, res) => {
+    var statement = "SELECT `student` FROM `status` WHERE suspended is not null"
+    mysqlConnection.query(statement, (err, rows, fields) => {
+        if (err) {
+            console.log(err)
+            res.status(404).send({ message: "MYSQL ERROR" })
+        } else {
+            res.send(rows)
+        }
+    })
+})
+
 // Notification 
 app.post('/api/retrievefornotifications/', (req, res) => {
     let json = req.body
@@ -192,6 +229,5 @@ function toArray(rows) {
     }
     return array
 }
-
 
 module.exports = app 
