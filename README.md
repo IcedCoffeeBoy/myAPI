@@ -1,5 +1,6 @@
 # myAPI
-Created using node.js and MYSQL
+Created using node.js and MYSQL <br>
+Localhost: `http://localhost:3000/` 
 
 ## Enter your MYSQL configuration
 Go to `mysql_config.js` <br>

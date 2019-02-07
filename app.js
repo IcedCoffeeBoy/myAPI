@@ -125,11 +125,10 @@ app.get('/api/commonstudents/', (req, res) => {
         var statement = 'SELECT student FROM relationship WHERE teacher=?'
         params = [req.query.teacher]
     }
-    console.log(statement)
+
 
     mysqlConnection.query(statement, params, (err, rows, fields) => {
         if (!err) {
-            console.log(rows)
             var array = toArray(rows)
             var ret = { student: array }
             res.send(ret)
@@ -204,7 +203,6 @@ app.post('/api/retrievefornotifications/', (req, res) => {
             res.status(404).send({ message: "MYSQL ERROR" })
         } else {
             students = toArray(rows)
-            console.log(students)
             students.forEach((student) => {
                 if (!emails.includes(student)) {
                     emails.push(student)
