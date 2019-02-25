@@ -1,29 +1,14 @@
-const mysql_config = require('./mysql_config.js');
-const createSQLtable = require('./createSQLtable.js');
-const mysql = require('mysql');
 const express = require('express');
 const bodypaser = require('body-parser');
 
+var registerRouter = require('./routes/register');
+var loginRouter = require('./routes/login');
+var loginCheck = require('./routes/loginCheck');
+
 var app = express();
 app.use(bodypaser.json());
-var mysqlConnection = mysql.createConnection(mysql_config);
 
-
-/*
-Connect to the MYSQL database
-Please edit MYSQL config at link: ./mysql_config.js
-Default create relationship and status tables if does not exist 
-*/
-mysqlConnection.connect((err) => {
-    if (!err) {
-        console.log('DB connection successful')
-        //Create required SQL table if missing 
-        createSQLtable(mysqlConnection)
-    } else {
-        console.log('DB connection failed \n Error:' + JSON.stringify(err, undefined, 2))
-        console.log('Please ensure you have enter in the correct credentials in mysql_config.js')
-    }
-});
+var mysqlConnection = require('./db');
 
 app.listen(3000, () => console.log('Express server is running at port no: 3000'))
 
@@ -48,60 +33,10 @@ app.get('/api/relationship', (req, res) => {
 })
 
 
+app.use('/login', loginRouter);
+
 // Register a teacher to many student and a student to many teacher
-app.post('/api/register', (req, res) => {
-    let json = req.body
-    var teacher_emails = json.teacher
-    var student_emails = json.students
-
-    if (!Array.isArray(teacher_emails)) {
-        teacher_emails = [teacher_emails]
-    }
-
-    if (!Array.isArray(student_emails)) {
-        student_emails = [student_emails]
-    }
-
-    if (student_emails.length > 1 && teacher_emails.length > 1) {
-        console.log("User attempt to add multiple teachers to multiple students!")
-        res.status(404).send({ message: "Unable to add multiple teachers to multiple students" })
-        return
-    }
-
-    var values = []
-    k = 0
-
-    for (var i in teacher_emails) {
-        for (var j in student_emails) {
-            values[k++] = [teacher_emails[i], student_emails[j]]
-        }
-    }
-
-    console.log(values)
-
-    var insertRelationship = "INSERT IGNORE INTO `relationship`(teacher,student) VALUES ?"
-    mysqlConnection.query(insertRelationship, [values], (err, rows, fields) => {
-        if (err) {
-            console.log(err)
-            res.status(404).send({ message: "MYSQL ERROR" })
-        } else {
-            res.sendStatus(204)
-        }
-    })
-
-    var insertStudents = "INSERT IGNORE INTO `status`(student) VALUES ? "
-    students_array = []
-    for (var k in student_emails) {
-        students_array[k] = [student_emails[k]]
-    }
-
-    mysqlConnection.query(insertStudents, [students_array], (err, rows, fields) => {
-        if (err) {
-            console.log(err)
-        }
-    })
-
-})
+app.use('/api/register', loginCheck, registerRouter);
 
 
 // Get common students 

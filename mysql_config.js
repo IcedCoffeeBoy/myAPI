@@ -1,3 +1,5 @@
+
+
 // Enter your mysql information in this file 
 var mysql_config = {
     host: 'localhost',
